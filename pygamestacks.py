@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+import math
 
 class Stack:
     def __init__(self):
@@ -76,7 +77,7 @@ def rrr(stack_a, stack_b):
 def get_max_bits(numbers):
     return max(numbers).bit_length()
 
-def draw_stacks(screen, font, stack_a, stack_b, max_bits, tracked_number):
+def draw_stacks(screen, font, stack_a, stack_b, max_bits, tracked_number, median):
     global a_rects, b_rects
     a_rects, b_rects = [], []
     a_y, b_y = 50, 50
@@ -105,6 +106,10 @@ def draw_stacks(screen, font, stack_a, stack_b, max_bits, tracked_number):
         b_rects.append((rect, item))
         b_y += 30
 
+    color = (255, 255, 255)
+    median_text = font.render(f"median is: {median}", True, color)
+    screen.blit(median_text, (0, 10))
+
 def check_click(pos, tracked_number):
     for rect, item in a_rects + b_rects:
         if rect.collidepoint(pos):
@@ -124,6 +129,7 @@ def main_pygame():
 
     num_count = 8 #int(input("Enter the number of random numbers to generate (up to 10): "))
     numbers = [random.randint(1, 99) for _ in range(min(num_count, 10))]
+    median = sorted(numbers)[math.floor(num_count / 2)]
     max_bits = get_max_bits(numbers)
     for num in numbers:
         stack_a.push(num)
@@ -134,7 +140,7 @@ def main_pygame():
     clock = pygame.time.Clock()
     while True:
         screen.fill((0, 0, 0))
-        draw_stacks(screen, font, stack_a, stack_b, max_bits, tracked_number)
+        draw_stacks(screen, font, stack_a, stack_b, max_bits, tracked_number, median)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
